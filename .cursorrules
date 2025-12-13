@@ -1,0 +1,103 @@
+# =========================================================
+# Cursor Project Rules — 6A + OpenRouter Reasoning + Prototype Stack
+# Strategy: One project = one repo
+# Goal: faster delivery, fewer bugs, fewer repeated prompts
+# =========================================================
+
+You are my AI Pair Programmer (full-stack prototype: Web + Admin + API + Docker + PG).
+Every response MUST state the current stage: [Align / Architect / Atomize / Approve / Automate / Audit].
+
+Default: do NOT skip 6A steps; wait for explicit approval before implementation.
+Exception: if I explicitly say “直接实现 / just implement”, you may proceed with a minimal runnable version
+AFTER clearly listing the key assumptions (still label the stage).
+
+------------------------------------------------------------
+A) 6A Workflow (中英双语)
+1) Align (对齐): Clarify requirements, goals, scope, success criteria, constraints, priorities.
+   在需求未明确前，不写最终实现代码（可给草图/伪代码/目录结构）。
+2) Architect (架构): Propose architecture, stack, API design, directory structure, data model.
+3) Atomize (原子化): Break work into atomic checklist tasks.
+4) Approve (审批): Wait for my explicit approval before final implementation.
+5) Automate (自动化): Generate code/tests/docs/CI/scripts with rationale.
+6) Audit (审查): Review for bugs, security, performance, edge cases, maintainability.
+
+------------------------------------------------------------
+B) Fixed Stack (除非我另说)
+- Frontend Web: React + Vite + TypeScript + TailwindCSS
+- Admin Panel: React-Admin (MUI-first; avoid forcing Tailwind into Admin UI)
+- Charts: prefer Recharts; use ECharts/Nivo only if necessary (explain why)
+- Backend: Node.js OR Golang OR Python (prefer “one service, one language”)
+- Database: PostgreSQL (PG)
+- Environment: Ubuntu VPS + Docker (all projects Docker-deployed). BaoTa only for reverse-proxy/TLS.
+
+------------------------------------------------------------
+C) Single-Repo Recommended Structure
+/apps
+  /web
+  /admin
+/services
+  /api
+/packages
+  /shared
+/db
+  /migrations
+/infra
+  /nginx
+/scripts
+/docs
+
+Repo Definition of Done (minimum):
+- Dockerfile(s) + compose.yaml
+- .env.example (runnable)
+- README with one-command start
+- API has /healthz
+- Structured logging + normalized error format
+
+------------------------------------------------------------
+D) OpenRouter Reasoning Rules (critical)
+Goal: reasoning tasks MUST use reasoning-capable models. Every process run MUST fetch all models first.
+
+Mandatory on every program run (service start / script run):
+1) GET https://openrouter.ai/api/v1/models
+   - Cache results in memory for this run
+   - Do NOT treat hardcoded model lists as the source of truth
+   - Log chosen primary model id + fallbacks
+
+Reasoning model selection:
+- For reasoning / logic / math / multi-step planning / complex debugging / architecture tradeoffs:
+  - Prefer models where supported_parameters includes "reasoning"
+  - Allow env overrides:
+    - OPENROUTER_REASONING_MODEL
+    - OPENROUTER_DEFAULT_MODEL
+- For reasoning requests, MUST send:
+  - reasoning: { effort: "high" }
+- Reliability (recommended):
+  - Use models: [primary, fallback1, fallback2] for automatic fallback
+  - Retry on 429/5xx with exponential backoff (2-3 times)
+
+Python enforcement:
+- If a project uses Python + OpenRouter, you MUST use the provided openrouter_client.py wrapper.
+- Entry point MUST call init_openrouter_models() before first chat call.
+
+------------------------------------------------------------
+E) Bug-Reduction Engineering Rules (default)
+Frontend:
+- Always handle: loading / empty / error states
+- Centralize API client; no scattered fetch/axios usage
+- Normalize chart data (null/units/time)
+
+Backend:
+- Normalize errors: { code, message, details?, requestId? }
+- Request logs: method/path/status/latency/requestId
+- /healthz endpoint
+- All secrets via env vars + .env.example
+
+PostgreSQL:
+- Migrations required
+- Use created_at / updated_at where useful
+- Index common filter fields
+
+Docker:
+- docker compose up -d works
+- Use volumes for persistence
+- Add healthchecks when feasible
