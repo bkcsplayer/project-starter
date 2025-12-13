@@ -1,59 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-label="Architecture diagram">
-  <defs>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000" flood-opacity=".18"/>
-    </filter>
-    <style>
-      .t { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
-      .h { font-size: 22px; font-weight: 800; fill: #0f172a; }
-      .p { font-size: 16px; fill: #334155; }
-      .tag { font-size: 13px; font-weight: 700; fill: #0f172a; }
-      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; filter: url(#shadow); }
-      .box2 { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
-      .line { stroke: #64748b; stroke-width: 2.5; fill: none; marker-end: url(#arrow); opacity: 0.9;}
-    </style>
-    <marker id="arrow" viewBox="0 0 10 10" refX="8.8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
-    </marker>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520">
+<rect width="1200" height="520" fill="#ffffff"/>
+<text x="40" y="60" font-family="Inter,Segoe UI,Arial" font-size="28" fill="#111827" font-weight="700">Architecture</text>
 
-  <rect width="1200" height="620" fill="#0b1220"/>
-  <text x="50" y="60" class="t" font-size="34" font-weight="900" fill="#e2e8f0">Template Architecture</text>
-  <text x="50" y="92" class="t" font-size="16" fill="#cbd5e1">Docker-first prototype stack with Cursor rules + OpenRouter reasoning models</text>
+<rect x="60" y="120" width="320" height="120" rx="14" fill="#f1f5f9" stroke="#cbd5e1"/>
+<text x="90" y="160" font-family="Inter,Segoe UI,Arial" font-size="22" fill="#0f172a" font-weight="600">Web (Vite + Tailwind)</text>
+<text x="90" y="195" font-family="Inter,Segoe UI,Arial" font-size="16" fill="#334155">http://localhost:8080/</text>
 
-  <rect x="60" y="130" width="330" height="170" rx="18" class="box"/>
-  <text x="90" y="175" class="t h">Web App</text>
-  <text x="90" y="205" class="t p">React + Vite + Tailwind</text>
-  <rect x="90" y="230" width="130" height="30" rx="10" fill="#38bdf8"/><text x="155" y="251" text-anchor="middle" class="t tag">apps/web</text>
+<rect x="60" y="280" width="320" height="120" rx="14" fill="#f1f5f9" stroke="#cbd5e1"/>
+<text x="90" y="320" font-family="Inter,Segoe UI,Arial" font-size="22" fill="#0f172a" font-weight="600">Admin (React-Admin)</text>
+<text x="90" y="355" font-family="Inter,Segoe UI,Arial" font-size="16" fill="#334155">http://localhost:8080/admin/</text>
 
-  <rect x="60" y="330" width="330" height="170" rx="18" class="box"/>
-  <text x="90" y="375" class="t h">Admin Panel</text>
-  <text x="90" y="405" class="t p">React-Admin + MUI</text>
-  <rect x="90" y="430" width="150" height="30" rx="10" fill="#a78bfa"/><text x="165" y="451" text-anchor="middle" class="t tag">apps/admin</text>
+<rect x="460" y="200" width="280" height="140" rx="14" fill="#ecfeff" stroke="#67e8f9"/>
+<text x="490" y="240" font-family="Inter,Segoe UI,Arial" font-size="22" fill="#0e7490" font-weight="700">Gateway (Nginx)</text>
+<text x="490" y="275" font-family="Inter,Segoe UI,Arial" font-size="16" fill="#155e75">Routes /, /admin, /api</text>
 
-  <rect x="445" y="210" width="320" height="210" rx="18" class="box"/>
-  <text x="475" y="255" class="t h">API Service</text>
-  <text x="475" y="285" class="t p">Node / Go / Python (one service)</text>
-  <rect x="475" y="310" width="170" height="30" rx="10" fill="#4ade80"/><text x="560" y="331" text-anchor="middle" class="t tag">services/api</text>
-  <rect x="475" y="350" width="260" height="48" rx="14" class="box2"/>
-  <text x="490" y="378" class="t" font-size="14" fill="#0f172a">/healthz  •  logs  • 统一错误格式</text>
+<rect x="820" y="140" width="320" height="120" rx="14" fill="#fefce8" stroke="#fde047"/>
+<text x="850" y="180" font-family="Inter,Segoe UI,Arial" font-size="22" fill="#854d0e" font-weight="700">API</text>
+<text x="850" y="215" font-family="Inter,Segoe UI,Arial" font-size="16" fill="#92400e">Node (default) / Go / Python</text>
 
-  <rect x="820" y="170" width="320" height="160" rx="18" class="box"/>
-  <text x="850" y="215" class="t h">PostgreSQL</text>
-  <text x="850" y="245" class="t p">Migrations + indexes</text>
-  <rect x="850" y="270" width="170" height="30" rx="10" fill="#fbbf24"/><text x="935" y="291" text-anchor="middle" class="t tag">db/migrations</text>
+<rect x="820" y="300" width="320" height="120" rx="14" fill="#f0fdf4" stroke="#86efac"/>
+<text x="850" y="340" font-family="Inter,Segoe UI,Arial" font-size="22" fill="#166534" font-weight="700">PostgreSQL</text>
+<text x="850" y="375" font-family="Inter,Segoe UI,Arial" font-size="16" fill="#14532d">db:5432</text>
 
-  <rect x="820" y="360" width="320" height="210" rx="18" class="box"/>
-  <text x="850" y="405" class="t h">OpenRouter</text>
-  <text x="850" y="435" class="t p">Reasoning models (effort=high)</text>
-  <rect x="850" y="460" width="275" height="56" rx="14" class="box2"/>
-  <text x="865" y="486" class="t" font-size="14" fill="#0f172a">Startup: GET /models → select model</text>
-  <text x="865" y="508" class="t" font-size="14" fill="#0f172a">Request: reasoning.effort = high</text>
-
-  <path d="M 390 215 C 420 215, 420 260, 445 270" class="line"/>
-  <path d="M 390 415 C 420 415, 420 360, 445 350" class="line"/>
-  <path d="M 765 290 C 790 290, 790 245, 820 245" class="line"/>
-  <path d="M 765 350 C 800 350, 800 430, 820 430" class="line"/>
-
-  <text x="50" y="595" class="t" font-size="14" fill="#94a3b8">Deploy: Docker Compose on Ubuntu VPS • Reverse proxy via BaoTa / Nginx</text>
+<line x1="380" y1="180" x2="460" y2="240" stroke="#94a3b8" stroke-width="3" />
+<line x1="380" y1="340" x2="460" y2="300" stroke="#94a3b8" stroke-width="3" />
+<line x1="740" y1="270" x2="820" y2="220" stroke="#94a3b8" stroke-width="3" />
+<line x1="980" y1="260" x2="980" y2="300" stroke="#94a3b8" stroke-width="3" />
 </svg>

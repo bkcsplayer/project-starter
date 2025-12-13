@@ -1,0 +1,8 @@
+-- Example migration (optional)
+-- CREATE TABLE IF NOT EXISTS notes (
+--   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+--   title text NOT NULL,
+--   body text NOT NULL,
+--   created_at timestamptz NOT NULL DEFAULT now(),
+--   updated_at timestamptz NOT NULL DEFAULT now()
+-- );

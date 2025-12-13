@@ -1,144 +1,140 @@
-<!-- README template generated for bkcsplayer/project-starter -->
+<img src="docs/assets/banner.svg" alt="project-starter banner" />
 
-<p align="center">
-  <img src="docs/assets/banner.svg" alt="project-starter banner" width="100%" />
-</p>
+# project-starter
 
-<p align="center">
-  <a href="https://github.com/bkcsplayer/project-starter/generate"><img alt="Use this template" src="https://img.shields.io/badge/Use%20this%20template-2ea44f?style=for-the-badge&logo=github&logoColor=white"></a>
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-Ready-4169E1?style=for-the-badge&logo=postgresql&logoColor=white">
-  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Rules-111827?style=for-the-badge&logoColor=white">
-</p>
+A **full-stack prototype template** you can reuse for every new project:
 
-<p align="center">
-  A <b>single-project</b> starter template to ship prototypes faster: <b>Web</b> + <b>Admin</b> + <b>API</b> + <b>Postgres</b> + <b>Docker</b>.<br/>
-  Comes with <b>Cursor rules</b> (6A workflow) and <b>OpenRouter reasoning</b> integration patterns (startup: <code>/models</code> → select → run).
-</p>
+- **Web**: React + Vite + TypeScript + TailwindCSS  
+- **Admin**: React-Admin (MUI)  
+- **API (choose one)**: **Node (Fastify)** / Go (Gin) / Python (FastAPI)  
+- **DB**: PostgreSQL  
+- **Deploy**: Docker-first (great for VPS + 宝塔 reverse proxy)
+
+> This repo is designed as a **GitHub Template**. Click **Use this template** to start a new project in seconds.
 
 ---
 
 ## ✨ What you get
 
-- **One-project, one-repo** structure (no monorepo chaos)
-- **Docker-first**: `compose.yaml` + Postgres + service wiring
-- **Cursor guardrails**: `.cursorrules` + reusable commands in `.cursor/commands`
-- **OpenRouter reasoning**: patterns + clients (Node/TS + Python) that **always fetch `/models` on startup** and enable **`reasoning.effort=high`** for logic-heavy tasks
-- Clean directories for:
-  - `apps/web` (React + Vite + Tailwind)
-  - `apps/admin` (React-Admin + MUI)
-  - `services/api` (Node / Go / Python — pick one per service)
-  - `db/migrations` (SQL migrations)
-  - `infra/nginx` (reverse proxy samples)
+- One command brings up **Web + Admin + API + Postgres + Gateway**
+- Nginx gateway routes:
+  - `/` → Web
+  - `/admin/` → Admin
+  - `/api/*` → API
+- OpenRouter wrappers (Node + Python) that:
+  - **Fetch `/models` on startup**
+  - Prefer **reasoning models**
+  - Use `reasoning: { effort: "high" }`
 
 ---
 
-## 🧭 Repository map
+## 🧭 Architecture
 
-```txt
-.cursor/commands/         # Cursor commands (repeatable prompts)
-apps/web/                 # React + Vite + Tailwind
-apps/admin/               # React-Admin + MUI
-services/api/             # API (Node/Go/Python)
-packages/shared/          # Shared utils / AI clients
-db/migrations/            # DB migrations
-infra/nginx/              # Nginx samples (BaoTa friendly)
-docs/assets/              # README images / diagrams
-compose.yaml              # Docker compose entry
-.env.example              # Environment template
-.cursorrules              # Project rules (6A + stack + OpenRouter)
-```
+<img src="docs/assets/architecture.svg" alt="Architecture diagram" />
 
 ---
 
-## 🚀 Quick start (Docker)
-
-> Prereqs: Docker + Docker Compose
+## 🚀 Quick Start (Docker)
 
 ```bash
-# 1) create a new repo from template (recommended)
-# https://github.com/bkcsplayer/project-starter/generate
-
-# 2) local run
-git clone <your-new-repo-url>
-cd <your-new-repo>
-
 cp .env.example .env
-# edit .env and set OPENROUTER_API_KEY + DB password, etc.
+# fill OPENROUTER_API_KEY if you want /api/ai/reason to work
 
-docker compose --env-file .env -f compose.yaml up -d --build
-docker compose -f compose.yaml ps
+docker compose up -d --build
 ```
 
-Stop:
+Open:
+
+- Web: http://localhost:8080/
+- Admin: http://localhost:8080/admin/
+- API: http://localhost:8080/api/hello
+
+### Switch backend (Go / Python)
+
+**Go**
 ```bash
-docker compose -f compose.yaml down
+docker compose -f compose.yaml -f compose.go.yaml up -d --build
+```
+
+**Python**
+```bash
+docker compose -f compose.yaml -f compose.py.yaml up -d --build
 ```
 
 ---
 
-## 🧠 OpenRouter: reasoning-first workflow
+## 🧪 API endpoints
 
-This template assumes your AI calls must be reliable for logic-heavy work:
+- `GET /healthz` → health check
+- `GET /api/hello` → hello
+- `POST /api/ai/reason` → reasoning example (works in **Node** and **Python** backends)
 
-### Rule: every run fetches all models first
-On service start, call:
+Example:
 
-- `GET https://openrouter.ai/api/v1/models`
-
-Then select a reasoning-capable model (prefer those exposing `supported_parameters` containing `"reasoning"`), and for reasoning tasks enable:
-
-```json
-{ "reasoning": { "effort": "high" } }
+```bash
+curl -X POST http://localhost:8080/api/ai/reason \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"Explain why we must fetch /models before picking a reasoning model."}'
 ```
 
-### Node/TypeScript client
-See: `packages/shared/ai/openrouter.ts`
+---
 
-### Python client
-See: `packages/shared/ai/openrouter_client.py`
+## 🖥️ Local Dev (without Docker)
+
+### Web
+```bash
+cd apps/web
+npm i
+npm run dev
+```
+
+### Admin
+```bash
+cd apps/admin
+npm i
+npm run dev
+```
+
+### API (Node default)
+```bash
+cd services/api-node
+npm i
+npm run dev
+```
 
 ---
 
-## 🧰 Cursor workflow (6A)
+## 🧱 Landing page (wireframe)
 
-This repo includes:
-
-- `.cursorrules` — your “always applied” project rule
-- `.cursor/commands/*` — reusable commands so you stop retyping long prompts
-
-Tip: open Cursor command palette and run commands from `.cursor/commands`.
+<img src="docs/assets/landingpage.svg" alt="Landing page wireframe" />
 
 ---
 
-## 🖼️ Landing page wireframe (placeholder)
+## 📦 Repo structure
 
-<p align="center">
-  <img src="docs/assets/landingpage.svg" alt="Landing page wireframe" width="100%" />
-</p>
-
----
-
-## 🧩 Architecture
-
-<p align="center">
-  <img src="docs/assets/architecture.svg" alt="Architecture diagram" width="100%" />
-</p>
-
----
-
-## 🔐 Environment variables
-
-Copy `.env.example` → `.env`.
-
-Common keys:
-
-- `OPENROUTER_API_KEY` — your OpenRouter key
-- `DATABASE_URL` or `POSTGRES_*` — Postgres connection
-- `APP_URL` / `APP_NAME` — optional headers for OpenRouter analytics
+```
+apps/
+  web/          # React Vite + Tailwind
+  admin/        # React-Admin (MUI)
+services/
+  api-node/     # Node Fastify (default)
+  api-go/       # Go Gin
+  api-py/       # Python FastAPI
+db/migrations/  # SQL migrations
+infra/nginx/    # Gateway config
+packages/shared/ai/  # OpenRouter wrappers
+.cursor/commands/    # Cursor commands (optional)
+```
 
 ---
 
-## 📜 License
+## 🔐 Notes
 
-MIT (or replace with your preferred license).
+- `.env` is ignored by git. Copy from `.env.example`.
+- If you use GitHub "Upload files" UI, dotfiles like `.cursorrules` / `.cursor/` may be hidden. Use `git push` instead.
+
+---
+
+## License
+
+MIT (or replace with your preferred license)
