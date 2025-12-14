@@ -1,8 +1,11 @@
--- Example migration (optional)
--- CREATE TABLE IF NOT EXISTS notes (
---   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
---   title text NOT NULL,
---   body text NOT NULL,
---   created_at timestamptz NOT NULL DEFAULT now(),
---   updated_at timestamptz NOT NULL DEFAULT now()
--- );
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Create index on email for faster lookups
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);

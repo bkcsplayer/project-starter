@@ -1,6 +1,7 @@
 name: project-starter
 
 services:
+  # PostgreSQL Database
   db:
     image: postgres:16-alpine
     environment:
@@ -11,11 +12,15 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d/migrations:ro
+      - ./db/seed:/docker-entrypoint-initdb.d/seed:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/00_init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 5s
       timeout: 3s
       retries: 20
+    restart: unless-stopped
 
   # Default backend: Node (Fastify)
   api:
@@ -23,8 +28,8 @@ services:
       context: ./services/api-node
       dockerfile: Dockerfile
     environment:
-      PORT: ${API_PORT:-8080}
-      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/app}
+      PORT: 8080
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-app}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
       APP_NAME: ${APP_NAME:-project-starter}
@@ -35,39 +40,40 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8080/healthz" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
+  # Web landing page
   web:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
-    environment:
-      PORT: ${WEB_PORT:-5173}
-    ports:
-      - "5173:5173"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5173/"]
+      test: [ "CMD", "wget", "-qO-", "http://localhost:80/healthz" ]
       interval: 10s
       timeout: 3s
-      retries: 20
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
+  # Admin panel
   admin:
     build:
       context: ./apps/admin
       dockerfile: Dockerfile
-    environment:
-      PORT: ${ADMIN_PORT:-5174}
-    ports:
-      - "5174:5174"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5174/"]
+      test: [ "CMD", "wget", "-qO-", "http://localhost:80/healthz" ]
       interval: 10s
       timeout: 3s
-      retries: 20
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
+  # Gateway - nginx reverse proxy
   gateway:
     image: nginx:1.27-alpine
     ports:
@@ -81,6 +87,12 @@ services:
         condition: service_healthy
       admin:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8080/nginx-health" ]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
 
 volumes:
   pgdata:

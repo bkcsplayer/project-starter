@@ -4,43 +4,95 @@
 You are my AI Pair Programmer. Follow the **6A Workflow**: Align → Architect → Atomize → Approve → Automate → Audit.
 Always indicate the current stage in your response.
 
-## Tech stack (default)
-- Web: React + Vite + TypeScript + TailwindCSS
-- Admin: React-Admin (MUI)
-- Charts: Recharts first
-- Backend options: Node(Fastify) / Go(Gin) / Python(FastAPI)
-- DB: PostgreSQL
-- Deploy: Ubuntu VPS + Docker (everything runs in containers)
+## Tech Stack (Default)
+- **Web**: React + Vite + TypeScript + TailwindCSS
+- **Admin**: React-Admin (MUI) with simple-rest data provider
+- **Charts**: Recharts first
+- **Backend Options**: Node (Fastify) / Go (Gin) / Python (FastAPI)
+- **Database**: PostgreSQL
+- **Deploy**: Docker Compose (single command startup)
 
-## Repo layout
-/apps/web
-/apps/admin
-/services/api-node
-/services/api-go
-/services/api-py
-/infra/nginx
-/db/migrations
-/packages/shared/ai
-/scripts
-/docs
+## Repo Layout
+```
+/apps/web           # React landing page
+/apps/admin         # React-Admin panel
+/services/api-node  # Node.js Fastify (default)
+/services/api-go    # Go Gin alternative
+/services/api-py    # Python FastAPI alternative
+/packages/shared/ai # OpenRouter wrappers
+/db/migrations      # SQL migrations
+/db/seed            # Seed data (upsert)
+/infra/nginx        # Gateway config
+/scripts            # Utility scripts
+/docs/assets        # SVG, images
+```
 
-## Docker compose usage
-- Default backend: Node (Fastify). Use `compose.yaml`.
-- Switch backend by overlaying compose file:
-  - Go:   `docker compose -f compose.yaml -f compose.go.yaml up -d --build`
-  - Py:   `docker compose -f compose.yaml -f compose.py.yaml up -d --build`
+## Docker Compose Usage
+- **Default (Node)**: `docker compose up -d --build`
+- **Go backend**: `docker compose -f compose.yaml -f compose.go.yaml up -d --build`
+- **Python backend**: `docker compose -f compose.yaml -f compose.py.yaml up -d --build`
 
-## OpenRouter reasoning rules (must)
-- Every program run / service start: MUST call `GET /models` first, cache in memory, then pick model.
-- Reasoning tasks MUST use reasoning models (prefer `supported_parameters` contains "reasoning") and send:
-  - `reasoning: { effort: "high" }`
-- Provide fallback models when possible.
+## OpenRouter Reasoning Rules (MANDATORY)
+1. **Every program run / service start**: MUST call `GET /models` first
+   - Cache the models list in memory
+   - Then pick model from cached list
+2. **Reasoning tasks MUST use**:
+   - Models with `supported_parameters` containing "reasoning"
+   - Send: `reasoning: { effort: "high" }`
+3. **Always provide fallback models** when possible
 
-## When asked to "integrate OpenRouter" in Python
-- MUST use /packages/shared/ai/openrouter_client.py (init_fetch_models first).
-- Do not bypass the wrapper.
+### Node/TypeScript
+Use `/packages/shared/ai/openrouter.ts`:
+```typescript
+import { initOpenRouterModels, chatOpenRouter } from './packages/shared/ai/openrouter';
+await initOpenRouterModels(); // MUST call first!
+const result = await chatOpenRouter({
+  mode: 'reasoning',
+  messages: [...],
+  temperature: 0.2
+});
+```
 
-## Quality defaults
-- Web/Admin must handle loading / empty / error states.
-- API must include: /healthz, request logging, unified error format.
-- All config via env vars (.env.example kept updated).
+### Python
+Use `/packages/shared/ai/openrouter_client.py`:
+```python
+from ai.openrouter_client import init_openrouter_models, chat
+init_openrouter_models()  # MUST call first!
+result = chat(mode="reasoning", messages=[...], temperature=0.2)
+```
+
+## API Standards
+- All backends implement the same routes (interchangeable via compose override)
+- Base path: `/api`
+
+### Required Endpoints
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /healthz | Health check `{ok: true, ts: ...}` |
+| GET | /hello | Hello `{message: "hello", backend: "node\|go\|py"}` |
+| GET | /admin/users | React-Admin list `{data: [...], total: N}` |
+| GET | /admin/users/:id | Single user `{data: {...}}` |
+| POST | /ai/reason | OpenRouter reasoning (Node/Python only) |
+
+### Error Response Format
+```json
+{ "code": "ERROR_CODE", "message": "Human readable", "details": {} }
+```
+
+## Database Standards
+- PostgreSQL with UUID primary keys
+- Migrations in `/db/migrations/` (numbered: 001_, 002_, ...)
+- Seeds in `/db/seed/` using UPSERT to avoid duplicates
+- Wait for DB ready with retry logic before starting app
+
+## Quality Defaults
+- TypeScript: strict mode, avoid `any`
+- All config via environment variables (never hardcode secrets)
+- Web/Admin must handle: loading, empty, error states
+- API: request logging, unified error format
+- Health checks for all services in compose
+
+## Windows Compatibility
+- Use PowerShell equivalents in scripts
+- Avoid bash-specific syntax
+- Use `Copy-Item` instead of `cp`

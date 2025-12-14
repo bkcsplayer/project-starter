@@ -1,12 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300">
-<defs>
-  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0%" stop-color="#111827"/>
-    <stop offset="100%" stop-color="#0ea5e9"/>
-  </linearGradient>
-</defs>
-<rect width="1200" height="300" fill="url(#g)"/>
-<text x="60" y="135" font-family="Inter,Segoe UI,Arial" font-size="54" fill="white" font-weight="700">project-starter</text>
-<text x="60" y="195" font-family="Inter,Segoe UI,Arial" font-size="26" fill="white" opacity="0.9">Full-stack prototype template: Web + Admin + API (Node/Go/Py) + PostgreSQL + Docker</text>
-<text x="60" y="245" font-family="Consolas,Menlo,monospace" font-size="20" fill="white" opacity="0.85">docker compose up -d --build</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e1b4b"/>
+      <stop offset="50%" style="stop-color:#312e81"/>
+      <stop offset="100%" style="stop-color:#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#d946ef"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bg)"/>
+  <rect x="40" y="70" width="60" height="60" rx="12" fill="url(#accent)"/>
+  <text x="70" y="112" font-family="system-ui, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">PS</text>
+  <text x="130" y="95" font-family="system-ui, sans-serif" font-size="42" font-weight="bold" fill="white">project-starter</text>
+  <text x="130" y="125" font-family="system-ui, sans-serif" font-size="16" fill="#a5b4fc">Full-Stack Prototype Template • React • Node/Go/Python • PostgreSQL • Docker</text>
+  <rect x="560" y="75" width="100" height="30" rx="6" fill="#22c55e" fill-opacity="0.2" stroke="#22c55e" stroke-opacity="0.5"/>
+  <text x="610" y="95" font-family="system-ui, sans-serif" font-size="12" fill="#22c55e" text-anchor="middle">Ready to Use</text>
+  <rect x="670" y="75" width="90" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-opacity="0.5"/>
+  <text x="715" y="95" font-family="system-ui, sans-serif" font-size="12" fill="#a78bfa" text-anchor="middle">Template</text>
 </svg>
